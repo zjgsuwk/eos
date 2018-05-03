@@ -1,0 +1,19 @@
+FROM neptunus/eos:snd as builder
+
+FROM ubuntu:16.04
+
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y install openssl vim && rm -rf /var/lib/apt/lists/*
+COPY --from=builder /tmp/build/bin /tmp/build/bin
+COPY --from=builder /tmp/build/share /tmp/build/share
+COPY --from=builder /eos/Docker/config.ini /
+COPY --from=builder /eos/Docker/nodeosd.sh /tmp/opt/eosio/bin/nodeosd.sh
+COPY --from=builder /opt/wasm/bin/* /opt/wasm/bin/
+COPY --from=builder /eos/contracts /eos/contracts
+COPY --from=builder /tmp/build /tmp/build
+COPY --from=builder /usr/local/include /usr/local/include
+ENV EOSIO_ROOT=/tmp/opt/eosio
+RUN mkdir -p /workspace && chmod +x /tmp/opt/eosio/bin/nodeosd.sh
+ENV LD_LIBRARY_PATH /usr/local/lib
+VOLUME /tmp/opt/eosio/bin/data-dir
+WORKDIR /workspace
+ENV PATH /tmp/build/bin:/tmp/opt/eosio/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin

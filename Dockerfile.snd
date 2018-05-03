@@ -1,0 +1,5 @@
+FROM neptunus/eos:fst
+
+RUN  cd eos \
+     && cmake --build /tmp/build --target install
+
