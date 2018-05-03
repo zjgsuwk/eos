@@ -1,4 +1,4 @@
-FROM eosio/builder
+FROM r.cfcr.io/zjgsuwk/zjgsuwk/eos:first
 
 RUN  cd eos \
      && cmake --build /tmp/build --target install
